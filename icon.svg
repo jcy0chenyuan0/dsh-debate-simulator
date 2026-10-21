@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Debate Simulator">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f6fed"/>
+      <stop offset="1" stop-color="#15a3a3"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#g)"/>
+  <g fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 15v30"/>
+    <path d="M22 49h20"/>
+    <path d="M14 22h36"/>
+    <path d="M14 22l-6 10a7 7 0 0 0 12 0z"/>
+    <path d="M50 22l-6 10a7 7 0 0 0 12 0z"/>
+    <path d="M32 15l-4-4h8z" fill="#fff"/>
+  </g>
+  <circle cx="17" cy="37" r="2" fill="#fff"/>
+  <circle cx="47" cy="37" r="2" fill="#fff"/>
+</svg>

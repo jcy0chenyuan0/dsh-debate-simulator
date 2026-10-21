@@ -1,0 +1,10 @@
+- insert:
+    - id: debate-simulation
+      name: '@local/dsh-debate-simulator'
+      config:
+        rounds: 3
+        bubbleSeconds: 10
+        discussionSeconds: 180
+        judges: 1
+        timeScale: 2
+        mode: ai
