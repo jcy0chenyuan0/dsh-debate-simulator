@@ -1,9 +1,14 @@
 {
-  "name": "@local/dsh-debate-simulator",
+  "name": "dsh-debate-simulator",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "description": "DSH 辩论模拟插件：管理员调度、8 名辩手、评委计分、教练总结、轮次归档与 Word 汇总。",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcy0chenyuan0/dsh-debate-simulator.git"
+  },
+  "homepage": "https://github.com/jcy0chenyuan0/dsh-debate-simulator#readme",
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
@@ -19,6 +24,7 @@
     "icon.svg",
     "README.md",
     "PUBLISH.md",
+    "LICENSE",
     "docs/*.md",
     "docs/*.png"
   ],
