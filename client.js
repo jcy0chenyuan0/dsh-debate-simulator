@@ -20,7 +20,7 @@
  *   - 不碰别人的 DOM、不挂 document.body、不用 iframe。
  */
 window.__ModuleLoader__.load({
-  id: '@local/dsh-debate-simulator',
+  id: 'dsh-debate-simulator',
   factory(require) {
     const React = require('react');
     const h = React.createElement;
