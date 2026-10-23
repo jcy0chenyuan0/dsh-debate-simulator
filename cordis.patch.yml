@@ -1,6 +1,6 @@
 - insert:
     - id: debate-simulation
-      name: '@local/dsh-debate-simulator'
+      name: 'dsh-debate-simulator'
       config:
         rounds: 3
         bubbleSeconds: 10
