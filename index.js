@@ -22,7 +22,7 @@ export const DEFAULT_CONFIG = {
   timeScale: 2,
   mode: 'ai',
   llmTimeoutMs: 90000,
-  maxRounds: 12,
+  maxRounds: 100,
 }
 
 export { createRoster, createSimulator }

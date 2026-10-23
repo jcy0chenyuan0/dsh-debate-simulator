@@ -609,6 +609,8 @@ window.__ModuleLoader__.load({
       const [promptJson, setPromptJson] = useState('');
       const [effort, setEffort] = useState(() => String(config.reasoningEffort || 'high'));
       const [trainingSide, setTrainingSide] = useState(() => (config.trainingSide === 'pro' || config.trainingSide === 'con' ? config.trainingSide : 'none'));
+      const [trainingStop, setTrainingStop] = useState(() => (config.trainingStop === 'rounds' ? 'rounds' : 'winrate'));
+      const [trainingWinRate, setTrainingWinRate] = useState(() => String(finiteNumber(config.trainingWinRate, 50)));
       const [simpleMode, setSimpleMode] = useState(() => config.simpleMode === true);
       const [loadFlow, setLoadFlow] = useState(() => config.loadFlow !== false);
       const [flowStages, setFlowStages] = useState(() => DEFAULT_FLOW.map((stage) => ({ ...stage, enabled: true })));
@@ -632,6 +634,8 @@ window.__ModuleLoader__.load({
         if (cfg.apiBaseUrl) setApiBase(String(cfg.apiBaseUrl));
         if (cfg.reasoningEffort) setEffort(String(cfg.reasoningEffort));
         if (cfg.trainingSide) setTrainingSide(String(cfg.trainingSide));
+        if (cfg.trainingStop) setTrainingStop(String(cfg.trainingStop));
+        if (cfg.trainingWinRate) setTrainingWinRate(String(cfg.trainingWinRate));
       }, [props.state]);
 
       const selectedStages = flowStages.filter((stage) => stage.enabled)
@@ -643,7 +647,10 @@ window.__ModuleLoader__.load({
         const topicText = String(topic || '').trim();
         if (!topicText) errors.topic = '请填写辩题。';
         else if (topicText.length > 200) errors.topic = '辩题最多 200 字（当前 ' + topicText.length + ' 字）。';
-        const roundsNum = parsePositiveInt(rounds, 1, 12, '轮次', errors, 'rounds');
+        const roundsNum = parsePositiveInt(rounds, 1, 100, '轮次', errors, 'rounds');
+        const winRateNum = trainingSide !== 'none' && trainingStop === 'winrate'
+          ? parsePositiveInt(trainingWinRate, 1, 100, '胜率阈值', errors, 'trainingWinRate')
+          : null;
         const bubbleNum = parsePositiveInt(bubble, 1, 120, '气泡秒数', errors, 'bubble');
         const judgesNum = parsePositiveInt(judges, 1, 3, '评委数', errors, 'judges');
         const scaleNum = parsePositiveInt(timeScale, 1, 60, '节奏（时间缩放）', errors, 'timeScale');
@@ -705,6 +712,8 @@ window.__ModuleLoader__.load({
             prompts: parsedPrompts,
             reasoningEffort: String(effort || '').trim() || null,
             trainingSide: trainingSide === 'pro' || trainingSide === 'con' ? trainingSide : 'none',
+            trainingStop: trainingStop === 'rounds' ? 'rounds' : 'winrate',
+            trainingWinRate: winRateNum == null ? 50 : winRateNum,
             simpleMode,
             loadFlow,
             customFlow,
@@ -738,7 +747,7 @@ window.__ModuleLoader__.load({
         h('details', { className: 'dsd-menu', open: true },
           h('summary', null, '赛制'),
           h('div', { className: 'dsd-form-grid' },
-            h(Field, { id: 'dsd-rounds', label: '轮次', hint: '1–100，默认 3；训练模式达到目标会提前结束', value: rounds, onChange: setRounds, error: fieldErrors.rounds, min: 1, max: 100, step: 1 }),
+            h(Field, { id: 'dsd-rounds', label: '轮次', hint: '1–100，默认 3；训练模式按结束条件提前收官', value: rounds, onChange: setRounds, error: fieldErrors.rounds, min: 1, max: 100, step: 1 }),
             h(Field, { id: 'dsd-bubble', label: '气泡秒数', hint: '1–120，每条发言停留时长', value: bubble, onChange: setBubble, error: fieldErrors.bubble, min: 1, max: 120, step: 1 }),
             h(Field, { id: 'dsd-discussion', label: '讨论分钟', hint: '0.5–30 分钟（每方限时）', value: discussionMin, onChange: setDiscussionMin, error: fieldErrors.discussion, min: 0.5, max: 30, step: 0.5 }),
             h(Field, { id: 'dsd-judges', label: '评委数', hint: '1–3 位', value: judges, onChange: setJudges, error: fieldErrors.judges, min: 1, max: 3, step: 1 })),
@@ -791,9 +800,31 @@ window.__ModuleLoader__.load({
               h('label', { className: 'dsd-field-label', htmlFor: 'dsd-training' }, '训练方'),
               h('select', { id: 'dsd-training', className: 'dsd-input', value: trainingSide, onChange: (event) => setTrainingSide(event.target.value) },
                 h('option', { value: 'none' }, '无（普通模拟）'),
-                h('option', { value: 'pro' }, '正方（达到目标提前结束）'),
-                h('option', { value: 'con' }, '反方（达到目标提前结束）')),
-              h('div', { className: 'dsd-hint' }, '训练方超过对手即提前结束'))),
+                h('option', { value: 'pro' }, '正方（训练）'),
+                h('option', { value: 'con' }, '反方（训练）')),
+              h('div', { className: 'dsd-hint' }, '开启后按「训练结束条件」收官')),
+            h('div', { className: 'dsd-field' },
+              h('label', { className: 'dsd-field-label', htmlFor: 'dsd-training-stop' }, '训练结束条件'),
+              h('select', {
+                id: 'dsd-training-stop', className: 'dsd-input', value: trainingStop,
+                disabled: trainingSide === 'none',
+                onChange: (event) => setTrainingStop(event.target.value),
+              },
+                h('option', { value: 'winrate' }, '训练方胜率超过阈值'),
+                h('option', { value: 'rounds' }, '固定轮次跑满')),
+              h('div', { className: 'dsd-hint' }, '胜率 = 训练方赢下的轮次 / 已完成轮次')),
+            h('div', { className: 'dsd-field' },
+              h('label', { className: 'dsd-field-label', htmlFor: 'dsd-training-winrate' }, '胜率阈值（%）'),
+              h('input', {
+                id: 'dsd-training-winrate', className: cls('dsd-input', fieldErrors.trainingWinRate && 'is-invalid'),
+                type: 'number', inputMode: 'numeric', min: 1, max: 100, step: 1,
+                value: trainingWinRate,
+                disabled: trainingSide === 'none' || trainingStop !== 'winrate',
+                onChange: (event) => setTrainingWinRate(event.target.value),
+              }),
+              fieldErrors.trainingWinRate
+                ? h('div', { className: 'dsd-field-error' }, fieldErrors.trainingWinRate)
+                : h('div', { className: 'dsd-hint' }, '1–100，默认 50；严格超过才收官，100 = 不提前结束'))),
           h('textarea', { className: 'dsd-textarea dsd-code', rows: 12, spellCheck: false, value: flowText, onChange: (event) => setFlowText(event.target.value), 'aria-label': '自定义赛制 JSON' }),
           h('div', { className: 'dsd-hint' }, 'JSON 版自定义赛制；留空或默认则用上面的逐环节配置。'),
 
