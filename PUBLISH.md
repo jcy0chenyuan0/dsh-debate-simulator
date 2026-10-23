@@ -13,6 +13,21 @@ DSH 插件市场（`dshmarket`）本身不接收上传：它读取精选列表
 
 当前机器没有 npm token，也没有 `gh`，所以这两步无法由插件自动完成。
 
+## 当前发布状态（2026-10-24）
+
+- **npm**：`dsh-debate-simulator` 包名已成功注册，但 `1.0.0` 尚未正式上线。
+  直接 `npm publish` 时 npm 自动走了“Staged Publishing”（同一条命令也下发了一个 `0.0.0-stage` 占位版），
+  真正的 `1.0.0` 需要发布者带 2FA **提升（promote）** 才会出现在 `latest`。
+  下一步（生成本机可信发布者身份后）：
+  ```bash
+  npm login            # 一次性
+  npm stage list dsh-debate-simulator
+  npm stage promote dsh-debate-simulator@1.0.0   # 需 2FA
+  ```
+- **插件市场**：awesome-dsh-plugin 的 PR **#8529** 已提交，`check` 与 `Submission gate` 两个检查均通过（CLEAN），等待维护者合并。
+- **GitHub**：源码已推送到 `jcy0chenyuan0/dsh-debate-simulator`（含训练结束条件设置）。
+
+
 ## 建议的上架方式
 
 ### 1. 改成公开包名并发布
