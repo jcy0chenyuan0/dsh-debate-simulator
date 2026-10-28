@@ -35,11 +35,10 @@ plugin_manager
 
 安装后刷新 Web GUI。左侧边栏「工具管理」下方出现「辩论模拟」。
 
-也可以用打包产物安装：
+换一台机器装、或目标机器不能联网，看 [docs/INSTALL.md](docs/INSTALL.md)（git / npm / 离线 tgz 三条路）。离线包这样生成，不依赖 npm：
 
 ```bash
-pnpm pack
-# 然后在 DSH 里 install_bundle 指向生成的 .tgz
+node scripts/pack.mjs   # → dist/dsh-debate-simulator-1.0.0.tgz
 ```
 
 ## 使用

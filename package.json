@@ -28,6 +28,11 @@
     "docs/*.md",
     "docs/*.png"
   ],
+  "scripts": {
+    "pack": "node scripts/pack.mjs",
+    "verify": "node scripts/verify.mjs",
+    "test": "node --test"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
