@@ -14,7 +14,7 @@
 | 路径 | 命令 | 适用 |
 | --- | --- | --- |
 | A. git（推荐） | `git clone https://github.com/jcy0chenyuan0/dsh-debate-simulator.git dsh-debate-simulator` | 目标机器能访问 GitHub |
-| B. npm | `npm install dsh-debate-simulator` | 包名已注册；若 `npm view dsh-debate-simulator dist-tags` 无 `latest`，说明还在 staged，走 A 或 C |
+| B. npm | `npm install dsh-debate-simulator`（registry `latest` = 1.0.0） | 目标机器有 npm；npm 上是发布时的快照，要最新源码走 A |
 | C. 离线包 | 拷 `dist/dsh-debate-simulator-<版本>.tgz` 过去 | 目标机器不能联网，或 A/B 都失败 |
 
 C 的包在源机器上生成（无需 npm）：
